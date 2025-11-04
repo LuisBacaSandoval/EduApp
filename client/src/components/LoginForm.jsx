@@ -115,7 +115,7 @@ const LoginForm = () => {
           </Link>
           {" - "}
           <Link
-            to="/dashboard"
+            to="/personalize-content"
             className="text-blue-600 hover:text-blue-700 font-medium"
           >
             Continuar
