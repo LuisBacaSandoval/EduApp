@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import image1 from "../assets/gesture.jpg";
 import image2 from "../assets/keyboard.jpg";
 import image3 from "../assets/microphone.jpg";
+import { PreferencesContext } from "../context/PreferencesContext";
 
 const interactionMethods = [
   {
@@ -32,6 +33,31 @@ const interactionMethods = [
 
 const PersonalizePage = () => {
   const [selected, setSelected] = useState(null);
+  const { interactionMode, setInteractionMode } =
+    useContext(PreferencesContext);
+
+  useEffect(() => {
+    console.log(interactionMode);
+  }, [interactionMode]);
+
+  const handleClick = (methodId) => {
+    setSelected(methodId);
+    let mode = "normal";
+    switch (methodId) {
+      case 1:
+        mode = "gestos";
+        break;
+      case 2:
+        mode = "normal";
+        break;
+      case 3:
+        mode = "voz";
+        break;
+      default:
+        mode = "normal";
+    }
+    setInteractionMode(mode);
+  };
 
   return (
     <div className="min-h-screen w-full bg-primary flex flex-col items-center justify-center p-6">
@@ -50,7 +76,7 @@ const PersonalizePage = () => {
                 {interactionMethods.map((method, index) => (
                   <button
                     key={method.id}
-                    onClick={() => setSelected(method.id)}
+                    onClick={() => handleClick(method.id)}
                     className={`
                 relative overflow-hidden rounded-3xl
                 ${method.color} bg-opacity-20 backdrop-blur-sm
