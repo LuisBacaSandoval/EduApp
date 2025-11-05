@@ -7,7 +7,7 @@ export default function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   return (
-    <div className={`h-screen bg-linear-to-b from-indigo-600 to-indigo-700 flex flex-col transition-all duration-300 relative overflow-clip ${isCollapsed ? 'w-20' : 'w-64'}`}>
+    <div className={`h-screen bg-linear-to-b from-indigo-500 to-indigo-700 flex flex-col transition-all duration-300 relative overflow-clip ${isCollapsed ? 'w-20' : 'w-64'}`}>
       {/* User Profile Section */}
       {/* TODO: Replace hardcode data with actual data from backend */}
       <div className="p-4">
