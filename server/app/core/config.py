@@ -115,7 +115,7 @@ class Settings(BaseSettings):
             f"HOST={self.HOST}, "
             f"PORT={self.PORT}"
             f")"
-
+        )
 
 # Instancia global de configuración
 try:
