@@ -131,6 +131,8 @@ Edita el archivo `.env` con tus valores:
 # API Key de Google Gemini (REQUERIDA)
 # Obtén tu API key en: https://aistudio.google.com/app/apikey
 # La API key debe tener al menos 20 caracteres y no contener espacios
+# IMPORTANTE: Si recibes error 403 PERMISSION_DENIED, ve a Google Cloud Console
+# y elimina las restricciones de "Referer HTTP" de tu API key
 GEMINI_API_KEY=tu_api_key_aqui_minimo_20_caracteres
 
 # Modelo de Gemini a utilizar
@@ -455,8 +457,22 @@ curl -X POST "http://localhost:8000/api/teoria/generar" \
 #### Generar Preguntas desde PDF
 
 ```bash
+# Forma básica
 curl -X POST "http://localhost:8000/api/pdf/generar-preguntas" \
   -F "file=@ruta/al/documento.pdf"
+
+# Con más detalles (verbose) para ver la respuesta completa
+curl -X POST "http://localhost:8000/api/pdf/generar-preguntas" \
+  -F "file=@ruta/al/documento.pdf" \
+  -v
+
+# Ejemplo con ruta absoluta
+curl -X POST "http://localhost:8000/api/pdf/generar-preguntas" \
+  -F "file=@/home/usuario/documentos/mi_documento.pdf"
+
+# Ejemplo con ruta relativa (desde el directorio actual)
+curl -X POST "http://localhost:8000/api/pdf/generar-preguntas" \
+  -F "file=@./documento.pdf"
 ```
 
 ### Ejemplos con Python
@@ -507,6 +523,32 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
 ---
 
 ## Solución de Problemas
+
+### Error: "403 PERMISSION_DENIED - API_KEY_HTTP_REFERRER_BLOCKED"
+
+**Problema**: La API key de Gemini tiene restricciones de referer HTTP configuradas que bloquean solicitudes desde servidores backend.
+
+**Solución**:
+
+1. Ve a [Google Cloud Console - API Keys](https://console.cloud.google.com/apis/credentials)
+2. Busca y selecciona tu API key de Gemini
+3. En la sección "Restricciones de aplicación", busca "Restricciones de referer HTTP"
+4. Tienes dos opciones:
+
+   **Opción A (Recomendada para desarrollo):**
+   - Selecciona "Ninguna" en las restricciones de referer HTTP
+   - Esto permite solicitudes desde cualquier origen (solo para desarrollo)
+
+   **Opción B (Para producción):**
+   - Si necesitas mantener restricciones, elimina las restricciones de referer HTTP
+   - En su lugar, usa restricciones de IP o de aplicación para mayor seguridad
+   - Para servidores backend, las restricciones de referer HTTP no funcionan porque no hay referer
+
+5. Guarda los cambios
+6. Espera unos minutos para que los cambios se propaguen
+7. Prueba nuevamente tu solicitud
+
+**Nota**: Las restricciones de referer HTTP están diseñadas para aplicaciones web frontend. Para APIs backend, debes usar otras formas de restricción como IP o no usar restricciones y confiar en mantener la API key secreta.
 
 ### Error: "GEMINI_API_KEY es requerida"
 

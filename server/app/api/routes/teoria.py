@@ -4,7 +4,7 @@ Sigue el principio de Single Responsibility: solo maneja las rutas relacionadas 
 """
 from typing import Optional
 from fastapi import APIRouter, HTTPException, Depends
-from app.models.schemas import TheoryRequest, TheoryResponse
+from app.models.schemas import TheoryRequest, TheoryResponse, TheoryStructured
 from app.services.gemini_service import GeminiService
 from app.core.dependencies import get_gemini_service
 from app.core.exceptions import GeminiServiceError
@@ -37,11 +37,20 @@ async def generar_teoria(
         )
     
     try:
-        teoria = gemini_service.generate_theory(request.tema)
+        teoria_dict = gemini_service.generate_theory(request.tema)
+        
+        # Validar y convertir el diccionario a TheoryStructured
+        try:
+            teoria_structured = TheoryStructured(**teoria_dict)
+        except Exception as e:
+            raise HTTPException(
+                status_code=500,
+                detail=f"Error al validar la estructura de la teoría generada: {str(e)}"
+            )
         
         return TheoryResponse(
             tema=request.tema,
-            teoria=teoria,
+            teoria=teoria_structured,
             success=True
         )
     except GeminiServiceError as e:
@@ -49,6 +58,8 @@ async def generar_teoria(
             status_code=500,
             detail=str(e)
         )
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(
             status_code=500,

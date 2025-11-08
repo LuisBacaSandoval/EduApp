@@ -4,7 +4,7 @@ Sigue el principio de Single Responsibility: solo maneja las rutas relacionadas 
 """
 from typing import Optional
 from fastapi import APIRouter, HTTPException, UploadFile, File, Depends
-from app.models.schemas import PDFQuestionsResponse
+from app.models.schemas import PDFQuestionsResponse, QuestionsStructured
 from app.services.gemini_service import GeminiService
 from app.services.pdf_service import PDFService
 from app.core.dependencies import get_gemini_service, get_pdf_service
@@ -54,11 +54,20 @@ async def generar_preguntas_pdf(
         texto_pdf = pdf_service.extract_text(pdf_content)
         
         # Generar preguntas usando Gemini
-        preguntas = gemini_service.generate_questions_from_text(texto_pdf)
+        preguntas_dict = gemini_service.generate_questions_from_text(texto_pdf)
+        
+        # Validar y convertir el diccionario a QuestionsStructured
+        try:
+            preguntas_structured = QuestionsStructured(**preguntas_dict)
+        except Exception as e:
+            raise HTTPException(
+                status_code=500,
+                detail=f"Error al validar la estructura de las preguntas generadas: {str(e)}"
+            )
         
         return PDFQuestionsResponse(
             nombre_archivo=file.filename or "documento.pdf",
-            preguntas=preguntas,
+            preguntas=preguntas_structured,
             success=True
         )
     
