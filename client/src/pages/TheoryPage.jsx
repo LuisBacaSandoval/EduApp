@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Sidebar from "../components/SideBar";
 import RightPanel from "../components/RightPanel";
 import API_CLIENT from "../lib/api.config";
@@ -23,7 +23,7 @@ const TheoryPage = () => {
     setGeneratedContent("");
 
     try {
-      const response = await API_CLIENT.post("api/teoria/generar", {
+      const response = await API_CLIENT.post("/teoria/generar", {
         tema: topic,
       });
 
@@ -98,7 +98,7 @@ const TheoryPage = () => {
                     key={t}
                     type="button"
                     onClick={() => setTopic(t)}
-                    className="mr-3 mb-3 px-4 py-2 rounded-md text-sm bg-black text-white inline-block hover:opacity-90"
+                    className="mr-3 mb-3 px-4 py-2 rounded-md text-sm bg-black text-white inline-block cursor-pointer hover:opacity-90"
                   >
                     {t}
                   </button>
