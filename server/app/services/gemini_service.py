@@ -76,11 +76,32 @@ class GeminiService:
         Returns:
             Las preguntas generadas
         """
-        prompt = (
-            f"Basándote en el siguiente contenido, genera preguntas educativas y relevantes sobre el tema. "
-            f"Las preguntas deben ser claras, variadas (de comprensión, análisis, aplicación) y útiles "
-            f"para evaluar el aprendizaje. Genera entre 5 y 10 preguntas.\n\n"
-            f"Contenido:\n{texto}"
-        )
+        prompt = f"""
+            A partir del siguiente contenido, genera una lista de preguntas de opción múltiple en formato JSON válido siguiendo exactamente el esquema indicado más abajo."
+
+            Contenido:
+            \"\"\"{texto}\"\"\"
+            
+
+            Esquema JSON de salida:
+            {{
+                "questions": [
+                    {{
+                        "id": "integer",                // identificador único de la pregunta
+                        "content": string",             // texto de la pregunta
+                        "possibleAnswers": ["string"],  // lista de opciones de respuesta
+                        "correctAnswer": "string"       // una de las opciones listadas en possibleAnswers
+                    }}
+                ]
+            }}
+
+            Requisitos:
+            - Devuelve solo el JSON válido, sin texto adicional, sin markdown, sin ```json.
+            - Las preguntas deben ser claras, variadas (de comprensión, análisis, aplicación) y útiles para evaluar el aprendizaje.
+            - Asegurate de que "correctAnswer" sea una de las opciones en "possibleAnswers".
+            - Genera entre 5 a 10 preguntas.
+            - Cada pregunta debe tener entre 3 a 5 opciones de respuesta.
+            """
+        
         return self.generate_content(prompt)
 

@@ -32,21 +32,16 @@ class TheoryResponse(BaseModel):
             }
         }
 
+class Question(BaseModel):
+    """Schema para una pregunta de opción múltiple."""
+    id: int
+    content: str
+    possibleAnswers: list[str]
+    correctAnswer: str
 
 class PDFQuestionsResponse(BaseModel):
     """Schema para la respuesta de generación de preguntas desde PDF."""
-    nombre_archivo: str
-    preguntas: str
-    success: bool = True
-
-    class Config:
-        json_schema_extra = {
-            "example": {
-                "nombre_archivo": "documento.pdf",
-                "preguntas": "1. ¿Cuál es el tema principal...",
-                "success": True
-            }
-        }
+    questions: list[Question]
 
 
 class ErrorResponse(BaseModel):

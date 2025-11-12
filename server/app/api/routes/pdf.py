@@ -10,6 +10,8 @@ from app.services.pdf_service import PDFService
 from app.core.dependencies import get_gemini_service, get_pdf_service
 from app.core.exceptions import PDFServiceError, GeminiServiceError
 
+import json
+
 router = APIRouter(prefix="/pdf", tags=["pdf"])
 
 
@@ -55,12 +57,16 @@ async def generar_preguntas_pdf(
         
         # Generar preguntas usando Gemini
         preguntas = gemini_service.generate_questions_from_text(texto_pdf)
+
+        if not preguntas or preguntas.strip() == "":
+            raise HTTPException(
+                status_code=500,
+                detail="El servicio de Gemini no devolvió contenido"
+            )
         
-        return PDFQuestionsResponse(
-            nombre_archivo=file.filename or "documento.pdf",
-            preguntas=preguntas,
-            success=True
-        )
+        data = json.loads(preguntas)
+        
+        return PDFQuestionsResponse(**data)
     
     except (PDFServiceError, GeminiServiceError) as e:
         raise HTTPException(
