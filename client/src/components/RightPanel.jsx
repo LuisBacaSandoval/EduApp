@@ -1,7 +1,6 @@
-import React from "react";
 import { CircleDot, Clock, NotebookPen, Trophy } from "lucide-react";
 
-export default function RightExclusivePanel({ fixedWidth = false }) {
+export default function RightPanel({ fixedWidth = false }) {
   const containerClass = `${
     fixedWidth ? "w-64" : "flex-1"
   } max-w-[256px] flex flex-col bg-indigo-600 p-4 gap-y-3`;

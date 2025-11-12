@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Sidebar from "../components/SideBar";
-import RightExclusivePanel from "../components/RightExclusivePanel";
+import RightPanel from "../components/RightPanel";
 import API_CLIENT from "../lib/api.config";
 
 const TheoryPage = () => {
@@ -179,7 +179,7 @@ const TheoryPage = () => {
         </div>
       </main>
 
-      <RightExclusivePanel />
+      <RightPanel />
     </div>
   );
 };
