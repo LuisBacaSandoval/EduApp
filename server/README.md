@@ -21,8 +21,11 @@ API REST desarrollada con FastAPI para la generación de contenido educativo uti
 
 EduApp API es el backend de una aplicación educativa que permite:
 
-- **Generar teoría educativa**: A partir de un tema de texto, genera explicaciones teóricas completas y didácticas usando Google Gemini.
+- **Generar teoría educativa**: A partir de un tema de texto, genera explicaciones teóricas completas y didácticas usando Google Gemini (en formato JSON o HTML).
 - **Generar preguntas desde PDFs**: Procesa documentos PDF, extrae su contenido y genera preguntas educativas relevantes sobre el material.
+- **Generar preguntas por tema**: Genera preguntas educativas directamente desde un tema específico, sin necesidad de un PDF (misma estructura que el endpoint de PDF).
+- **Generar recomendaciones de temas**: Genera títulos de temas educativos aleatorios para mostrar como sugerencias en la interfaz de usuario.
+- **Tutor virtual (UNIprofe)**: Sistema de tutoría interactiva donde un tutor virtual experto ayuda a los estudiantes con sus dudas sobre un tema específico, manteniendo conversaciones fluidas y contextualizadas.
 
 La aplicación está construida siguiendo principios SOLID y buenas prácticas de desarrollo, con una arquitectura escalable y mantenible.
 
@@ -451,6 +454,196 @@ Genera preguntas educativas basadas en el contenido de un PDF.
 
 ---
 
+#### `POST /api/pdf/generar-preguntas-por-tema`
+Genera preguntas educativas basadas en un tema específico. Usa la misma estructura de respuesta que el endpoint de PDF.
+
+**Request Body:**
+```json
+{
+  "tema": "La fotosíntesis en las plantas",
+  "cantidad": 5
+}
+```
+
+**Parámetros:**
+- `tema` (requerido): Tema sobre el cual generar preguntas (1-500 caracteres)
+- `cantidad` (opcional): Número de preguntas a generar (3-10, por defecto 5)
+
+**Response:**
+```json
+{
+  "questions": [
+    {
+      "id": 0,
+      "content": "¿Qué es la fotosíntesis?",
+      "possibleAnswers": [
+        "Proceso de respiración de las plantas",
+        "Proceso de conversión de luz en energía química",
+        "Proceso de crecimiento de raíces",
+        "Proceso de absorción de agua"
+      ],
+      "correctAnswer": 1
+    },
+    {
+      "id": 1,
+      "content": "¿Dónde ocurre principalmente la fotosíntesis?",
+      "possibleAnswers": [
+        "En las raíces",
+        "En los cloroplastos de las hojas",
+        "En el tallo",
+        "En las flores"
+      ],
+      "correctAnswer": 1
+    }
+  ],
+  "success": true
+}
+```
+
+**Códigos de Estado:**
+- `200`: Éxito
+- `400`: Error de validación (tema vacío o cantidad fuera de rango)
+- `500`: Error del servidor o API key no configurada
+
+**Características:**
+- ✅ Misma estructura que el endpoint de PDF (`Question` con `id`, `content`, `possibleAnswers`, `correctAnswer`)
+- ✅ Re-indexación automática: Los IDs siempre empiezan en 0
+- ✅ `correctAnswer` es el índice (número) de la opción correcta
+- ✅ Compatible con el mismo componente frontend que usa el endpoint de PDF
+
+**Uso típico:**
+Este endpoint se usa cuando el usuario selecciona un tema recomendado o escribe un tema, y se quieren generar preguntas sobre ese tema sin necesidad de un PDF.
+
+---
+
+### Recomendaciones
+
+#### `GET /api/recomendaciones/aleatorias`
+Genera títulos de temas educativos completamente aleatorios para mostrar como recomendaciones en la UI.
+Cada llamada genera temas diferentes.
+
+**Query Parameters:**
+- `cantidad` (opcional): Número de temas a generar (3-5, por defecto 3)
+
+**Examples:**
+```bash
+# Sin parámetros (devuelve 3 temas por defecto)
+GET /api/recomendaciones/aleatorias
+
+# Con parámetro cantidad
+GET /api/recomendaciones/aleatorias?cantidad=5
+```
+
+**Response:**
+```json
+{
+  "temas": [
+    "Geometría Fractal",
+    "Revolución Industrial",
+    "Inteligencia Artificial"
+  ],
+  "success": true
+}
+```
+
+**Códigos de Estado:**
+- `200`: Éxito
+- `400`: Error de validación (cantidad fuera de rango 3-5)
+- `500`: Error del servidor o API key no configurada
+
+**Características:**
+- ✅ Genera temas diferentes en cada llamada
+- ✅ Cubre diferentes áreas del conocimiento
+- ✅ Títulos cortos y concisos (máximo 30 caracteres)
+- ✅ Ideal para botones de "Temas recomendados" en la UI
+
+**Uso típico:**
+Este endpoint se usa para poblar los botones de "Temas recomendados" cuando el usuario abre la vista de teoría. Los temas generados son clickeables y al hacer click, se genera automáticamente la teoría usando el endpoint `/api/teoria/generar`.
+
+---
+
+### Tutor Virtual (UNIprofe)
+
+#### `POST /api/tutor/iniciar`
+Inicia una conversación con el tutor virtual UNIprofe. El tutor se presenta como experto en el tema especificado.
+
+**Request Body:**
+```json
+{
+  "tema": "La Segunda Guerra Mundial"
+}
+```
+
+**Response:**
+```json
+{
+  "mensaje": "Hola 👋, soy UNIprofe y soy experto en La Segunda Guerra Mundial. Estoy aquí para ayudarte en todas tus dudas sobre este tema. ¿Qué es lo que deseas saber?",
+  "tema": "La Segunda Guerra Mundial",
+  "success": true
+}
+```
+
+**Códigos de Estado:**
+- `200`: Éxito
+- `400`: Error de validación (tema vacío)
+- `500`: Error del servidor o API key no configurada
+
+---
+
+#### `POST /api/tutor/mensaje`
+Envía un mensaje al tutor y recibe una respuesta. Mantiene el contexto de la conversación mediante el historial.
+
+**Request Body:**
+```json
+{
+  "tema": "La Segunda Guerra Mundial",
+  "mensaje": "¿Cuándo comenzó la guerra?",
+  "historial": [
+    {
+      "role": "tutor",
+      "content": "Hola 👋, soy UNIprofe y soy experto en La Segunda Guerra Mundial...",
+      "timestamp": "2024-01-01T10:00:00"
+    }
+  ]
+}
+```
+
+**Response:**
+```json
+{
+  "respuesta": "La Segunda Guerra Mundial comenzó el 1 de septiembre de 1939 cuando Alemania invadió Polonia. Este evento marcó el inicio de uno de los conflictos más devastadores de la historia. ¿Te gustaría saber más sobre las causas que llevaron a este conflicto? 📚",
+  "tema": "La Segunda Guerra Mundial",
+  "success": true
+}
+```
+
+**Códigos de Estado:**
+- `200`: Éxito
+- `400`: Error de validación (mensaje vacío)
+- `500`: Error del servidor o API key no configurada
+
+**Características del Tutor:**
+- ✅ **Personalidad amigable**: UNIprofe es un tutor virtual experto, paciente y entusiasta
+- ✅ **Especialización**: Solo responde sobre el tema asignado, redirige amablemente si el usuario se desvía
+- ✅ **Contexto mantenido**: Usa el historial de conversación para respuestas coherentes
+- ✅ **Manejo de casos especiales**: Detecta mensajes vacíos y desviaciones del tema
+- ✅ **Emojis apropiados**: Usa emojis (máximo 2-3 por mensaje) para hacer la conversación más agradable
+- ✅ **Conversación fluida**: Mantiene un diálogo natural y educativo
+- ✅ **Tono didáctico**: Explica de manera clara y adapta el lenguaje al nivel del estudiante
+
+**Comportamiento del Tutor:**
+- Si el usuario pregunta sobre otro tema: Amablemente le recuerda que solo es experto en el tema asignado
+- Si el usuario envía mensaje vacío: Le indica que no escribió nada y pregunta si tiene más dudas
+- Mantiene la linealidad: Se enfoca en el tema elegido y no se desvía
+
+**Uso típico:**
+1. El usuario elige o escribe un tema
+2. Se llama a `/api/tutor/iniciar` para comenzar la conversación
+3. El usuario envía mensajes usando `/api/tutor/mensaje` con el historial completo
+4. El tutor responde manteniendo el contexto de toda la conversación
+
+---
+
 ## Seguridad
 
 ### Medidas Implementadas
@@ -545,6 +738,41 @@ curl -X POST "http://localhost:8000/api/teoria/generar-html" \
   -o teoria.html && start teoria.html
 ```
 
+#### Generar Recomendaciones Aleatorias
+
+```bash
+# Sin parámetros (devuelve 3 temas por defecto)
+curl -X GET "http://localhost:8000/api/recomendaciones/aleatorias"
+
+# Con parámetro cantidad
+curl -X GET "http://localhost:8000/api/recomendaciones/aleatorias?cantidad=5"
+
+# Ejemplo de respuesta:
+# {
+#   "temas": ["Geometría Fractal", "Revolución Industrial", "Inteligencia Artificial"],
+#   "success": true
+# }
+```
+
+#### Generar Preguntas por Tema
+
+```bash
+# Básico (5 preguntas por defecto)
+curl -X POST "http://localhost:8000/api/pdf/generar-preguntas-por-tema" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "tema": "La fotosíntesis en las plantas"
+  }'
+
+# Con cantidad específica
+curl -X POST "http://localhost:8000/api/pdf/generar-preguntas-por-tema" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "tema": "La fotosíntesis en las plantas",
+    "cantidad": 7
+  }'
+```
+
 #### Generar Preguntas desde PDF
 
 ```bash
@@ -564,6 +792,55 @@ curl -X POST "http://localhost:8000/api/pdf/generar-preguntas" \
 # Ejemplo con ruta relativa (desde el directorio actual)
 curl -X POST "http://localhost:8000/api/pdf/generar-preguntas" \
   -F "file=@./documento.pdf"
+```
+
+#### Iniciar Tutor Virtual
+
+```bash
+# Iniciar conversación con el tutor
+curl -X POST "http://localhost:8000/api/tutor/iniciar" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "tema": "La Segunda Guerra Mundial"
+  }'
+```
+
+#### Enviar Mensaje al Tutor
+
+```bash
+# Enviar primer mensaje (sin historial)
+curl -X POST "http://localhost:8000/api/tutor/mensaje" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "tema": "La Segunda Guerra Mundial",
+    "mensaje": "¿Cuándo comenzó la guerra?",
+    "historial": []
+  }'
+
+# Enviar mensaje con historial (para mantener contexto)
+curl -X POST "http://localhost:8000/api/tutor/mensaje" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "tema": "La Segunda Guerra Mundial",
+    "mensaje": "¿Y cuándo terminó?",
+    "historial": [
+      {
+        "role": "tutor",
+        "content": "Hola 👋, soy UNIprofe y soy experto en La Segunda Guerra Mundial...",
+        "timestamp": "2024-01-01T10:00:00"
+      },
+      {
+        "role": "user",
+        "content": "¿Cuándo comenzó la guerra?",
+        "timestamp": "2024-01-01T10:01:00"
+      },
+      {
+        "role": "tutor",
+        "content": "La Segunda Guerra Mundial comenzó el 1 de septiembre de 1939...",
+        "timestamp": "2024-01-01T10:01:30"
+      }
+    ]
+  }'
 ```
 
 ### Ejemplos con Python
@@ -588,6 +865,29 @@ with open("teoria.html", "w", encoding="utf-8") as f:
     f.write(response.text)
 print("HTML guardado en teoria.html")
 
+# Generar recomendaciones aleatorias
+response = requests.get("http://localhost:8000/api/recomendaciones/aleatorias")
+data = response.json()
+print(f"Temas recomendados: {data['temas']}")
+# Output ejemplo: ["Geometría Fractal", "Revolución Industrial", "Inteligencia Artificial"]
+
+# Con cantidad específica
+response = requests.get("http://localhost:8000/api/recomendaciones/aleatorias?cantidad=5")
+print(response.json())
+
+# Generar preguntas por tema
+response = requests.post(
+    "http://localhost:8000/api/pdf/generar-preguntas-por-tema",
+    json={
+        "tema": "La fotosíntesis en las plantas",
+        "cantidad": 5
+    }
+)
+data = response.json()
+print(f"Preguntas generadas: {len(data['questions'])}")
+for q in data['questions']:
+    print(f"Pregunta {q['id']}: {q['content']}")
+
 # Generar preguntas desde PDF
 with open("documento.pdf", "rb") as f:
     files = {"file": f}
@@ -596,6 +896,49 @@ with open("documento.pdf", "rb") as f:
         files=files
     )
     print(response.json())
+
+# Iniciar tutor virtual
+tema = "La Segunda Guerra Mundial"
+response = requests.post(
+    "http://localhost:8000/api/tutor/iniciar",
+    json={"tema": tema}
+)
+data = response.json()
+print(f"Mensaje del tutor: {data['mensaje']}")
+
+# Mantener historial de conversación
+historial = [
+    {"role": "tutor", "content": data['mensaje'], "timestamp": "2024-01-01T10:00:00"}
+]
+
+# Enviar mensaje al tutor
+mensaje_usuario = "¿Cuándo comenzó la guerra?"
+response = requests.post(
+    "http://localhost:8000/api/tutor/mensaje",
+    json={
+        "tema": tema,
+        "mensaje": mensaje_usuario,
+        "historial": historial
+    }
+)
+respuesta = response.json()
+print(f"Respuesta del tutor: {respuesta['respuesta']}")
+
+# Agregar al historial para mantener contexto
+historial.append({"role": "user", "content": mensaje_usuario, "timestamp": "2024-01-01T10:01:00"})
+historial.append({"role": "tutor", "content": respuesta['respuesta'], "timestamp": "2024-01-01T10:01:30"})
+
+# Continuar la conversación
+mensaje_usuario2 = "¿Y cuándo terminó?"
+response = requests.post(
+    "http://localhost:8000/api/tutor/mensaje",
+    json={
+        "tema": tema,
+        "mensaje": mensaje_usuario2,
+        "historial": historial
+    }
+)
+print(f"Respuesta del tutor: {response.json()['respuesta']}")
 ```
 
 ---
