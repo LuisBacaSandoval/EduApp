@@ -90,7 +90,7 @@ class GeminiService:
                         "id": "integer",                // identificador único de la pregunta
                         "content": string",             // texto de la pregunta
                         "possibleAnswers": ["string"],  // lista de opciones de respuesta
-                        "correctAnswer": "string"       // una de las opciones listadas en possibleAnswers
+                        "correctAnswer": "integer"      // índice de la respuesta correcta con respecto al arreglo "possibleAnswers"
                     }}
                 ]
             }}

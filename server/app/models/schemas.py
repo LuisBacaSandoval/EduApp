@@ -37,7 +37,7 @@ class Question(BaseModel):
     id: int
     content: str
     possibleAnswers: list[str]
-    correctAnswer: str
+    correctAnswer: int
 
 class PDFQuestionsResponse(BaseModel):
     """Schema para la respuesta de generación de preguntas desde PDF."""
