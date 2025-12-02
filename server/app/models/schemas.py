@@ -65,7 +65,7 @@ class Question(BaseModel):
     id: int
     content: str
     possibleAnswers: list[str]
-    correctAnswer: str
+    correctAnswer: int
 
 # Schemas para preguntas estructuradas
 class Pregunta(BaseModel):

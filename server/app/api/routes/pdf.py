@@ -64,6 +64,11 @@ async def generar_preguntas_pdf(
                 detail="El servicio de Gemini no devolvió contenido"
             )
         
+        if preguntas.startswith("```json"):
+            preguntas = preguntas.replace("```json", "")
+        if preguntas.endswith("```"):
+            preguntas = preguntas.replace("```", "")
+
         data = json.loads(preguntas)
         
         return PDFQuestionsResponse(**data)
