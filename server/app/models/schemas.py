@@ -60,6 +60,12 @@ class TheoryResponse(BaseModel):
             }
         }
 
+class Question(BaseModel):
+    """Schema para una pregunta de opción múltiple."""
+    id: int
+    content: str
+    possibleAnswers: list[str]
+    correctAnswer: str
 
 # Schemas para preguntas estructuradas
 class Pregunta(BaseModel):
@@ -79,29 +85,7 @@ class QuestionsStructured(BaseModel):
 
 class PDFQuestionsResponse(BaseModel):
     """Schema para la respuesta de generación de preguntas desde PDF."""
-    nombre_archivo: str
-    preguntas: QuestionsStructured
-    success: bool = True
-
-    class Config:
-        json_schema_extra = {
-            "example": {
-                "nombre_archivo": "documento.pdf",
-                "preguntas": {
-                    "preguntas": [
-                        {
-                            "numero": 1,
-                            "pregunta": "¿Cuál es el tema principal?",
-                            "opciones": ["Opción A", "Opción B", "Opción C", "Opción D"],
-                            "respuesta_correcta": "A",
-                            "tipo": "comprension",
-                            "dificultad": "facil"
-                        }
-                    ]
-                },
-                "success": True
-            }
-        }
+    questions: list[Question]
 
 
 class ErrorResponse(BaseModel):

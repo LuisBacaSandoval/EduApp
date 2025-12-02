@@ -123,31 +123,32 @@ class GeminiService:
         Returns:
             Diccionario con las preguntas estructuradas en formato JSON
         """
-        prompt = (
-            f"Basándote en el siguiente contenido, genera preguntas educativas de opción múltiple (A, B, C, D) "
-            f"y relevantes sobre el tema. Las preguntas deben ser claras, variadas (de comprensión, análisis, aplicación), "
-            f"cortas y útiles para evaluar el aprendizaje. Genera entre 5 y 10 preguntas.\n\n"
-            f"Debes responder ÚNICAMENTE con un objeto JSON válido (sin texto adicional, sin markdown, solo JSON) "
-            f"con la siguiente estructura exacta:\n\n"
-            f'{{\n'
-            f'  "preguntas": [\n'
-            f'    {{\n'
-            f'      "numero": 1,\n'
-            f'      "pregunta": "Texto de la pregunta",\n'
-            f'      "opciones": ["Opción A", "Opción B", "Opción C", "Opción D"],\n'
-            f'      "respuesta_correcta": "A",\n'
-            f'      "tipo": "comprension",\n'
-            f'      "dificultad": "facil"\n'
-            f'    }}\n'
-            f'  ]\n'
-            f'}}\n\n'
-            f"El tipo puede ser: 'comprension', 'analisis', o 'aplicacion'. "
-            f"La dificultad puede ser: 'facil', 'media', o 'alta'. "
-            f"La respuesta_correcta debe ser una de las letras: 'A', 'B', 'C', o 'D'. "
-            f"Asegúrate de que el JSON sea válido y esté bien formateado.\n\n"
-            f"Contenido:\n{texto}"
-        )
+        prompt = f"""
+            A partir del siguiente contenido, genera una lista de preguntas de opción múltiple en formato JSON válido siguiendo exactamente el esquema indicado más abajo."
+
+            Contenido:
+            \"\"\"{texto}\"\"\"
+            
+
+            Esquema JSON de salida:
+            {{
+                "questions": [
+                    {{
+                        "id": "integer",                // identificador único de la pregunta
+                        "content": string",             // texto de la pregunta
+                        "possibleAnswers": ["string"],  // lista de opciones de respuesta
+                        "correctAnswer": "string"       // una de las opciones listadas en possibleAnswers
+                    }}
+                ]
+            }}
+
+            Requisitos:
+            - Devuelve solo el JSON válido, sin texto adicional, sin markdown, sin ```json.
+            - Las preguntas deben ser claras, variadas (de comprensión, análisis, aplicación) y útiles para evaluar el aprendizaje.
+            - Asegurate de que "correctAnswer" sea una de las opciones en "possibleAnswers".
+            - Genera entre 5 a 10 preguntas.
+            - Cada pregunta debe tener entre 3 a 5 opciones de respuesta.
+            """
         
-        response_text = self.generate_content(prompt)
-        return self._parse_json_from_text(response_text)
+        return self.generate_content(prompt)
 

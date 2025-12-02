@@ -1,11 +1,25 @@
 import { useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { Hands } from "@mediapipe/hands";
 import { Camera } from "@mediapipe/camera_utils";
+import createGestureHandler from "../lib/gestureNavigation";
 
 export default function HandTracking() {
+  const navigate = useNavigate();
+  const gestureHandlerRef = useRef(null);
+
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
+
+  // initialize gesture handler once (uses navigate)
+  if (!gestureHandlerRef.current) {
+    try {
+      gestureHandlerRef.current = createGestureHandler(navigate);
+    } catch (e) {
+      console.error("Failed to create gesture handler:", e);
+    }
+  }
 
   useEffect(() => {
     let camera = null;
@@ -45,6 +59,13 @@ export default function HandTracking() {
       if (results.multiHandLandmarks) {
         for (const landmarks of results.multiHandLandmarks) {
           drawLandmarks(canvasCtx, landmarks);
+        }
+        // call gesture handler with current landmarks
+        try {
+          if (gestureHandlerRef.current)
+            gestureHandlerRef.current(results.multiHandLandmarks);
+        } catch {
+          // ignore
         }
       }
       canvasCtx.restore();
@@ -93,8 +114,8 @@ export default function HandTracking() {
         // if a previous camera exists, try to stop it
         try {
           if (camera && typeof camera.stop === "function") camera.stop();
-        } catch {
-          // ignore
+        } catch (e) {
+          console.error("Failed to stop camera:", e);
         }
 
         camera = new Camera(videoRef.current, {
@@ -135,8 +156,8 @@ export default function HandTracking() {
       try {
         if (resizeObserver && typeof resizeObserver.disconnect === "function")
           resizeObserver.disconnect();
-      } catch {
-        // ignore
+      } catch (e) {
+        console.error("Failed to disconnect resize observer:", e);
       }
     };
   }, []);
