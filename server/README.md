@@ -341,7 +341,7 @@ Estado de salud de la API.
 ### Teoría
 
 #### `POST /api/teoria/generar`
-Genera teoría educativa sobre un tema dado.
+Genera teoría educativa sobre un tema dado. **Responde en formato JSON**.
 
 **Request Body:**
 ```json
@@ -354,10 +354,66 @@ Genera teoría educativa sobre un tema dado.
 ```json
 {
   "tema": "La fotosíntesis en las plantas",
-  "teoria": "La fotosíntesis es un proceso biológico mediante el cual las plantas...",
+  "teoria": {
+    "titulo": "La Fotosíntesis en las Plantas",
+    "introduccion": "La fotosíntesis es un proceso biológico...",
+    "secciones": [
+      {
+        "titulo": "¿Qué es la fotosíntesis?",
+        "contenido": "La fotosíntesis es un proceso bioquímico..."
+      }
+    ],
+    "conceptos_clave": ["clorofila", "cloroplastos", "dióxido de carbono"],
+    "ejemplos": ["Plantas verdes como árboles y hierbas"]
+  },
   "success": true
 }
 ```
+
+**Códigos de Estado:**
+- `200`: Éxito
+- `400`: Error de validación
+- `500`: Error del servidor o API key no configurada
+
+---
+
+#### `POST /api/teoria/generar-html`
+Genera teoría educativa sobre un tema dado. **Responde en formato HTML** listo para visualizar en el navegador.
+
+**Request Body:**
+```json
+{
+  "tema": "La fotosíntesis en las plantas"
+}
+```
+
+**Response:**
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>La Fotosíntesis en las Plantas</title>
+    <style>
+        /* Estilos incluidos para visualización atractiva */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>La Fotosíntesis en las Plantas</h1>
+        <div class="introduccion">...</div>
+        <section class="seccion">...</section>
+        <!-- Contenido completo formateado -->
+    </div>
+</body>
+</html>
+```
+
+**Características del HTML:**
+- ✅ Diseño responsive y moderno
+- ✅ Estilos CSS integrados
+- ✅ Estructura semántica
+- ✅ Listo para abrir en navegador o incrustar
 
 **Códigos de Estado:**
 - `200`: Éxito
@@ -444,7 +500,7 @@ La API incluye documentación interactiva generada automáticamente:
 
 ### Ejemplos con cURL
 
-#### Generar Teoría
+#### Generar Teoría (JSON)
 
 ```bash
 curl -X POST "http://localhost:8000/api/teoria/generar" \
@@ -452,6 +508,41 @@ curl -X POST "http://localhost:8000/api/teoria/generar" \
   -d '{
     "tema": "La fotosíntesis"
   }'
+```
+
+#### Generar Teoría (HTML)
+
+```bash
+# Básico - muestra el HTML en la terminal
+curl -X POST "http://localhost:8000/api/teoria/generar-html" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "tema": "La fotosíntesis en las plantas"
+  }'
+
+# Guardar el HTML en un archivo y abrirlo en el navegador
+curl -X POST "http://localhost:8000/api/teoria/generar-html" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "tema": "La fotosíntesis en las plantas"
+  }' \
+  -o teoria.html && xdg-open teoria.html
+
+# En macOS, usa 'open' en lugar de 'xdg-open'
+curl -X POST "http://localhost:8000/api/teoria/generar-html" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "tema": "La fotosíntesis en las plantas"
+  }' \
+  -o teoria.html && open teoria.html
+
+# En Windows, usa 'start' en lugar de 'xdg-open'
+curl -X POST "http://localhost:8000/api/teoria/generar-html" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "tema": "La fotosíntesis en las plantas"
+  }' \
+  -o teoria.html && start teoria.html
 ```
 
 #### Generar Preguntas desde PDF
@@ -480,12 +571,22 @@ curl -X POST "http://localhost:8000/api/pdf/generar-preguntas" \
 ```python
 import requests
 
-# Generar teoría
+# Generar teoría (JSON)
 response = requests.post(
     "http://localhost:8000/api/teoria/generar",
     json={"tema": "La fotosíntesis"}
 )
 print(response.json())
+
+# Generar teoría (HTML)
+response = requests.post(
+    "http://localhost:8000/api/teoria/generar-html",
+    json={"tema": "La fotosíntesis en las plantas"}
+)
+# Guardar el HTML en un archivo
+with open("teoria.html", "w", encoding="utf-8") as f:
+    f.write(response.text)
+print("HTML guardado en teoria.html")
 
 # Generar preguntas desde PDF
 with open("documento.pdf", "rb") as f:
