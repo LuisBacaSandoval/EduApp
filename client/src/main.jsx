@@ -4,12 +4,15 @@ import "./index.css";
 import App from "./App.jsx";
 import { BrowserRouter } from "react-router-dom";
 import { PreferencesProvider } from "./context/PreferencesContext.jsx";
+import { VoiceProvider } from "./context/VoiceContext.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
       <PreferencesProvider>
-        <App />
+        <VoiceProvider>
+          <App />
+        </VoiceProvider>
       </PreferencesProvider>
     </BrowserRouter>
   </StrictMode>

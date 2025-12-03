@@ -3,6 +3,7 @@ import { routes } from "./routes";
 import HandTracking from "./components/HandTracking";
 import { useContext } from "react";
 import { PreferencesContext } from "./context/PreferencesContext";
+import { VoiceToggleButton } from "./components/VoiceToggleButton";
 
 function App() {
   const element = useRoutes(routes);
@@ -16,6 +17,13 @@ function App() {
           <HandTracking />
         </div>
       )}
+      {
+        interactionMode === "voz" && (
+          <div className="absolute z-50 bottom-0 right-0 w-[50vw] lg:w-[15vw] h-auto max-w-full overflow-hidden flex items-center justify-center bg-gray-100">
+            <VoiceToggleButton />
+          </div>
+        )
+      }
     </div>
   );
 }
