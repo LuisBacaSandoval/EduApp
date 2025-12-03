@@ -5,8 +5,9 @@ export const PreferencesContext = createContext();
 export const PreferencesProvider = ({ children }) => {
   // valores posibles: "camara" | "voz" | "normal"
   const [interactionMode, setInteractionMode] = useState("normal");
+  const [lastScore, setLastScore] = useState(null);
 
-  const value = { interactionMode, setInteractionMode };
+  const value = { interactionMode, setInteractionMode, lastScore, setLastScore };
 
   return (
     <PreferencesContext.Provider value={value}>

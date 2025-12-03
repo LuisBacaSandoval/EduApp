@@ -1,8 +1,10 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import image1 from "../assets/gesture.jpg";
 import image2 from "../assets/keyboard.jpg";
 import image3 from "../assets/microphone.jpg";
 import { PreferencesContext } from "../context/PreferencesContext";
+import { useVoiceContext } from "../context/VoiceContext";
 
 const interactionMethods = [
   {
@@ -33,12 +35,9 @@ const interactionMethods = [
 
 const PersonalizePage = () => {
   const [selected, setSelected] = useState(null);
-  const { interactionMode, setInteractionMode } =
-    useContext(PreferencesContext);
-
-  useEffect(() => {
-    console.log(interactionMode);
-  }, [interactionMode]);
+  const { setInteractionMode } = useContext(PreferencesContext);
+  const { activateMic } = useVoiceContext();
+  const navigate = useNavigate();
 
   const handleClick = (methodId) => {
     setSelected(methodId);
@@ -52,11 +51,13 @@ const PersonalizePage = () => {
         break;
       case 3:
         mode = "voz";
+        activateMic();
         break;
       default:
         mode = "normal";
     }
     setInteractionMode(mode);
+    navigate("/dashboard", { replace: true });
   };
 
   return (
