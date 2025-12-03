@@ -24,18 +24,18 @@ const DashboardPage = () => {
             to={"/theory"}
             features={[
               "Contenido automático personalizado",
-              "Adaptado a tu nivel"
+              "Adaptado a tu nivel",
             ]}
             image={image1}
           />
 
           {/* Card 2 - Genera preguntas */}
           <Card
-            title="Genera preguntas"
-            subtitle="Crea tus preguntas de estudio"
-            to={"/practice"}
+            title="Tutor virtual"
+            subtitle="Practica de manera personalizada"
+            to={"/tutor"}
             features={[
-              "Preguntas variadas por nivel",
+              "Preguntas adaptadas a ti",
               //"Retroalimentación inmediata"
             ]}
             image={image2}
@@ -43,12 +43,12 @@ const DashboardPage = () => {
 
           {/* Card 3 - Aprendizaje rápido */}
           <Card
-            title="Aprendizaje rápido"
+            title="Evaluación rápida"
             subtitle="Crea preguntas rápidas"
-            to={"#"}
+            to={"/fast-practice"}
             features={[
               "Sesiones rápidas de estudio",
-              "Aprende con voz y gestos"
+              "Aprende con voz y gestos",
             ]}
             image={image3}
           />
@@ -60,7 +60,7 @@ const DashboardPage = () => {
             to={"#"}
             features={[
               "Compite con otros usuarios",
-              "Sube en el ranking global"
+              "Sube en el ranking global",
             ]}
             image={image4}
           />
@@ -70,7 +70,9 @@ const DashboardPage = () => {
           <h2 className="text-4xl font-semibold mb-4">Recomendados para ti</h2>
           <div className="relative">
             <img src={image5} className="w-64 rounded-2xl" />
-            <text className="absolute top-3/5 z-10 bg-white w-64 text-black text-center font-bold text-2xl">Arte</text>
+            <text className="absolute top-3/5 z-10 bg-white w-64 text-black text-center font-bold text-2xl">
+              Arte
+            </text>
           </div>
         </div>
       </div>

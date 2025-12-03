@@ -23,7 +23,7 @@ const TheoryPage = () => {
     setGeneratedContent("");
 
     try {
-      const response = await API_CLIENT.post("/teoria/generar", {
+      const response = await API_CLIENT.post("/teoria/generar-html", {
         tema: topic,
       });
 
@@ -62,7 +62,7 @@ const TheoryPage = () => {
       <main className="flex-1 p-8 flex items-start">
         <div className="w-full max-w-3xl">
           <h1 className="text-3xl font-bold mb-3 text-primary">
-            Construye tu conocimiento
+            Generar teoría
           </h1>
           <p className="text-lg text-gray-700 mb-6">
             Genera teoría personalizada y conviértete en el protagonista de tu
@@ -149,7 +149,7 @@ const TheoryPage = () => {
 
           {/* Área donde se muestra el contenido generado */}
           {generatedContent && (
-            <div className="max-h-[50vh] mt-6 p-6 border rounded-2xl bg-white shadow-sm overflow-y-auto">
+            <div className="max-h-[60vh] mt-6 p-6 border rounded-2xl bg-white shadow-sm overflow-y-auto overflow-x-hidden max-w-full">
               {(() => {
                 const lines = String(generatedContent).split("\n");
                 const first = lines[0] || "";
@@ -169,9 +169,7 @@ const TheoryPage = () => {
                 }
 
                 return (
-                  <p className="text-gray-700 whitespace-pre-line">
-                    {generatedContent}
-                  </p>
+                  <div dangerouslySetInnerHTML={{ __html: generatedContent }} />
                 );
               })()}
             </div>

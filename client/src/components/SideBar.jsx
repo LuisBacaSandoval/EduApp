@@ -1,17 +1,35 @@
-import { useState } from 'react';
-import { LayoutDashboard, BookOpen, ListChecks, Users, HelpCircle, Settings, LogOut, Trophy, ChevronRight, ChevronLeft } from 'lucide-react';
-import SidebarButton from './SidebarButton.jsx';
+import { useState } from "react";
+import {
+  LayoutDashboard,
+  BookOpen,
+  ListChecks,
+  Users,
+  HelpCircle,
+  Settings,
+  LogOut,
+  Trophy,
+  ChevronRight,
+  ChevronLeft,
+} from "lucide-react";
+import SidebarButton from "./SidebarButton.jsx";
 
 export default function Sidebar() {
-
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   return (
-    <div className={`h-screen bg-linear-to-b from-indigo-500 to-indigo-700 flex flex-col transition-all duration-300 relative overflow-clip ${isCollapsed ? 'w-20' : 'w-64'}`}>
+    <div
+      className={`h-screen bg-linear-to-b from-indigo-500 to-indigo-700 flex flex-col transition-all duration-300 relative overflow-clip ${
+        isCollapsed ? "w-20" : "w-64"
+      }`}
+    >
       {/* User Profile Section */}
       {/* TODO: Replace hardcode data with actual data from backend */}
       <div className="p-4">
-        <div className={`bg-white rounded-2xl shadow-lg transition-all duration-300 ${isCollapsed ? 'p-1.5' : 'p-3'}`}>
+        <div
+          className={`bg-white rounded-2xl shadow-lg transition-all duration-300 ${
+            isCollapsed ? "p-1.5" : "p-3"
+          }`}
+        >
           {!isCollapsed ? (
             <>
               <div className="flex items-center justify-between mb-3">
@@ -45,24 +63,57 @@ export default function Sidebar() {
 
       {/* Main Navigation */}
       <nav className="flex-1 px-4 space-y-3">
-        <SidebarButton icon={LayoutDashboard} isCollapsed={isCollapsed} to={"/dashboard"}>Dashboard</SidebarButton>
-        <SidebarButton icon={BookOpen} isCollapsed={isCollapsed} to={"/theory"}>Teoría</SidebarButton>
-        <SidebarButton icon={ListChecks} isCollapsed={isCollapsed} to={"/practice"}>Práctica</SidebarButton>
-        <SidebarButton icon={Users} isCollapsed={isCollapsed}>Comunidad</SidebarButton>
-        <SidebarButton icon={HelpCircle} isCollapsed={isCollapsed} to={"/help"}>Ayuda</SidebarButton>
+        <SidebarButton
+          icon={LayoutDashboard}
+          isCollapsed={isCollapsed}
+          to={"/dashboard"}
+        >
+          Dashboard
+        </SidebarButton>
+        <SidebarButton icon={BookOpen} isCollapsed={isCollapsed} to={"/theory"}>
+          Generar teoría
+        </SidebarButton>
+        <SidebarButton
+          icon={ListChecks}
+          isCollapsed={isCollapsed}
+          to={"/tutor"}
+        >
+          Tutor virtual
+        </SidebarButton>
+        <SidebarButton
+          icon={ListChecks}
+          isCollapsed={isCollapsed}
+          to={"/fast-practice"}
+        >
+          Evaluación rápida
+        </SidebarButton>
+        <SidebarButton icon={Users} isCollapsed={isCollapsed}>
+          Comunidad
+        </SidebarButton>
+        <SidebarButton icon={HelpCircle} isCollapsed={isCollapsed} to={"/help"}>
+          Ayuda
+        </SidebarButton>
       </nav>
 
       {/* Bottom Navigation */}
       <div className="p-4 space-y-3">
-        <SidebarButton icon={Settings} isCollapsed={isCollapsed} to={"/personalize-content"}>Ajustes</SidebarButton>
-        <SidebarButton icon={LogOut} isCollapsed={isCollapsed} to={"/"} >Salir</SidebarButton>
+        <SidebarButton
+          icon={Settings}
+          isCollapsed={isCollapsed}
+          to={"/personalize-content"}
+        >
+          Ajustes
+        </SidebarButton>
+        <SidebarButton icon={LogOut} isCollapsed={isCollapsed} to={"/"}>
+          Salir
+        </SidebarButton>
       </div>
 
       {/* Toggle Button */}
       <button
         onClick={() => setIsCollapsed(!isCollapsed)}
         className="absolute top-1/2 -translate-y-1/12 -right-6 bg-white hover:bg-gray-50 rounded-lg p-2 shadow-lg transition-all duration-300 cursor-pointer hover:scale-110 z-20 border-2 border-indigo-200"
-        aria-label={isCollapsed ? 'Expandir sidebar' : 'Contraer sidebar'}
+        aria-label={isCollapsed ? "Expandir sidebar" : "Contraer sidebar"}
       >
         {isCollapsed ? (
           <ChevronRight className="w-5 h-5 text-indigo-600 relative right-3" />
