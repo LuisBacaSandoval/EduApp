@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Download, Award, CheckCircle, XCircle } from "lucide-react";
 
 import Sidebar from "../components/SideBar";
 import RightPanel from "../components/RightPanel";
 import API_CLIENT from "../lib/api.config";
+import { PreferencesContext } from "../context/PreferencesContext";
 
 const PracticePage = () => {
   const [loading, setLoading] = useState(false);
@@ -14,6 +15,8 @@ const PracticePage = () => {
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(null);
   const [error, setError] = useState('');
+
+  const { setLastScore } = useContext(PreferencesContext);
 
 
   /* Upload PDF */
@@ -160,6 +163,8 @@ const PracticePage = () => {
     setAnswers({});
     setSubmitted(false);
     setScore(0);
+    setQuizData(null);
+    setSelectedFile(null);
   }
 
   if (!quizData) {
@@ -316,6 +321,7 @@ const PracticePage = () => {
 
   if (submitted) {
     const percentage = (score / quizData.questions.length) * 100;
+    setLastScore(percentage);
     return (
       <div className="flex flex-row h-screen">
         <Sidebar />

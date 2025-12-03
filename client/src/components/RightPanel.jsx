@@ -1,9 +1,12 @@
 import { CircleDot, Clock, NotebookPen, Trophy } from "lucide-react";
+import { useContext } from "react";
+import { PreferencesContext } from "../context/PreferencesContext";
 
 export default function RightPanel({ fixedWidth = false }) {
-  const containerClass = `${
-    fixedWidth ? "w-64" : "flex-1"
-  } max-w-[256px] flex flex-col bg-indigo-600 p-4 gap-y-3`;
+  const containerClass = `${fixedWidth ? "w-64" : "flex-1"
+    } max-w-[256px] flex flex-col bg-indigo-600 p-4 gap-y-3`;
+
+  const { lastScore } = useContext(PreferencesContext);
 
   return (
     <div className={containerClass}>
@@ -13,7 +16,7 @@ export default function RightPanel({ fixedWidth = false }) {
         <div className="flex flex-col">
           <h4 className="text-base font-semibold">Último quizz</h4>
           <h6 className="text-xs">Resultados de tu último quizz</h6>
-          <span className="text-base">9/10</span>
+          <span className="text-base">{lastScore ? `${lastScore}%` : '-'}</span>
         </div>
         <div className="bg-primary w-12 h-12 rounded-md self-center flex items-center justify-center">
           <CircleDot className="text-white" />
