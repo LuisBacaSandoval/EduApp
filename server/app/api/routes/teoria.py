@@ -14,178 +14,71 @@ router = APIRouter(prefix="/teoria", tags=["teoría"])
 
 
 def teoria_to_html(tema: str, teoria: TheoryStructured) -> str:
-    """
-    Convierte un objeto TheoryStructured a HTML formateado.
-    
-    Args:
-        tema: El tema de la teoría
-        teoria: Objeto TheoryStructured con la teoría
-        
-    Returns:
-        String con HTML formateado
-    """
-    # Generar HTML para las secciones
     secciones_html = ""
     for seccion in teoria.secciones:
         secciones_html += f"""
-        <section class="seccion">
-            <h2>{seccion.titulo}</h2>
-            <p>{seccion.contenido}</p>
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold text-gray-800 mb-2 border-b pb-1">{seccion.titulo}</h2>
+            <p class="text-gray-700 leading-relaxed">{seccion.contenido}</p>
         </section>
         """
-    
-    # Generar HTML para conceptos clave
+
     conceptos_html = ""
     if teoria.conceptos_clave:
-        conceptos_items = "".join([f"<li>{concepto}</li>" for concepto in teoria.conceptos_clave])
+        conceptos_items = "".join(
+            f'<li class="pl-4 relative before:content-[\'•\'] before:absolute before:left-0 before:text-blue-500">{c}</li>'
+            for c in teoria.conceptos_clave
+        )
         conceptos_html = f"""
-        <div class="conceptos-clave">
-            <h2>Conceptos Clave</h2>
-            <ul>
+        <div class="bg-yellow-50 p-4 rounded-lg mb-8">
+            <h2 class="text-lg font-semibold text-yellow-600 mb-2">Conceptos Clave</h2>
+            <ul class="space-y-1">
                 {conceptos_items}
             </ul>
         </div>
         """
-    
-    # Generar HTML para ejemplos
+
     ejemplos_html = ""
     if teoria.ejemplos:
-        ejemplos_items = "".join([f"<li>{ejemplo}</li>" for ejemplo in teoria.ejemplos])
+        ejemplos_items = "".join(
+            f'<li class="pl-4 relative before:content-[\'•\'] before:absolute before:left-0 before:text-green-500">{e}</li>'
+            for e in teoria.ejemplos
+        )
         ejemplos_html = f"""
-        <div class="ejemplos">
-            <h2>Ejemplos</h2>
-            <ul>
+        <div class="bg-blue-50 p-4 rounded-lg mb-8">
+            <h2 class="text-lg font-semibold text-blue-600 mb-2">Ejemplos</h2>
+            <ul class="space-y-1">
                 {ejemplos_items}
             </ul>
         </div>
         """
-    
-    # HTML completo
+
     html_content = f"""
-    <!DOCTYPE html>
-    <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>{teoria.titulo}</title>
-        <style>
-            body {{
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                line-height: 1.6;
-                max-width: 900px;
-                margin: 0 auto;
-                padding: 20px;
-                background-color: #f5f5f5;
-                color: #333;
-            }}
-            .container {{
-                background-color: white;
-                padding: 30px;
-                border-radius: 10px;
-                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            }}
-            h1 {{
-                color: #2c3e50;
-                border-bottom: 3px solid #3498db;
-                padding-bottom: 10px;
-                margin-bottom: 20px;
-            }}
-            .tema {{
-                background-color: #ecf0f1;
-                padding: 10px 15px;
-                border-left: 4px solid #3498db;
-                margin-bottom: 20px;
-                font-style: italic;
-            }}
-            .introduccion {{
-                background-color: #e8f4f8;
-                padding: 20px;
-                border-radius: 5px;
-                margin-bottom: 30px;
-                border-left: 4px solid #3498db;
-            }}
-            .seccion {{
-                margin-bottom: 30px;
-            }}
-            .seccion h2 {{
-                color: #34495e;
-                margin-bottom: 10px;
-                border-bottom: 2px solid #ecf0f1;
-                padding-bottom: 5px;
-            }}
-            .seccion p {{
-                text-align: justify;
-                line-height: 1.8;
-            }}
-            .conceptos-clave, .ejemplos {{
-                background-color: #fff9e6;
-                padding: 20px;
-                border-radius: 5px;
-                margin-top: 30px;
-                border-left: 4px solid #f39c12;
-            }}
-            .conceptos-clave h2, .ejemplos h2 {{
-                color: #e67e22;
-                margin-top: 0;
-            }}
-            ul {{
-                list-style-type: none;
-                padding-left: 0;
-            }}
-            li {{
-                padding: 8px 0;
-                padding-left: 25px;
-                position: relative;
-            }}
-            li:before {{
-                content: "▸";
-                position: absolute;
-                left: 0;
-                color: #3498db;
-                font-weight: bold;
-            }}
-            .conceptos-clave li:before {{
-                color: #f39c12;
-                content: "●";
-            }}
-            .footer {{
-                margin-top: 40px;
-                text-align: center;
-                color: #7f8c8d;
-                font-size: 0.9em;
-                border-top: 1px solid #ecf0f1;
-                padding-top: 20px;
-            }}
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <h1>{teoria.titulo}</h1>
-            
-            <div class="tema">
-                <strong>Tema:</strong> {tema}
+        <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-md p-6">
+            <h1 class="text-3xl font-bold text-gray-900 mb-4">{teoria.titulo}</h1>
+
+            <div class="bg-gray-100 p-3 rounded-md mb-6">
+                <strong class="font-medium">Tema:</strong> {tema}
             </div>
-            
-            <div class="introduccion">
-                <strong>Introducción:</strong><br>
-                {teoria.introduccion}
+
+            <div class="bg-blue-50 p-4 rounded-lg mb-8 border-l-4 border-blue-400">
+                <p class="text-gray-800">
+                    <strong class="font-semibold">Introducción:</strong><br>
+                    {teoria.introduccion}
+                </p>
             </div>
-            
+
             {secciones_html}
-            
             {conceptos_html}
-            
             {ejemplos_html}
-            
-            <div class="footer">
+
+            <div class="text-center text-sm text-gray-500 mt-8 pt-4 border-t">
                 Generado por EduApp - Contenido educativo con IA
             </div>
         </div>
-    </body>
-    </html>
     """
-    
-    return html_content
+
+    return html_content.strip()
 
 
 @router.post("/generar", response_model=TheoryResponse)
